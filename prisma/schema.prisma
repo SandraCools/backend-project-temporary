@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  firstName   String    @db.VarChar(255)
+  lastName    String?   @db.VarChar(255)
+  description String?   @db.VarChar(255)
+  avatar      String?   @db.VarChar(255)
+  contactInfo Json      @default("[{}]") @db.JsonB
+  meetings    Meeting[]
+  tags        Tag[]
+  userId      String    @db.Uuid
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Meeting {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String?
+  date        DateTime
+  // Komt overeen met CONTRAINT FK_Meeting_Contact FOREIGN KEY (contactId) REFERENCES Contact(id) ON DELETE CASCADE
+  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId   String   @db.Uuid
+  userId      String   @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name     String
+  contacts Contact[]
+  userId   String    @db.Uuid
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id       String    @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email    String    @unique @db.VarChar(255)
+  password String
+  username String
+  sessions Session[]
+  Contact  Contact[]
+  Meeting  Meeting[]
+  Tag      Tag[]
+}
+
+model Session {
+  id          String   @id @unique @db.VarChar()
+  activeFrom  DateTime @default(now())
+  activeUntil DateTime @default(dbgenerated("CURRENT_TIMESTAMP + interval '1 day'"))
+  userId      String   @db.Uuid
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

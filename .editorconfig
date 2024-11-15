@@ -1,0 +1,9 @@
+# EditorConfig is awesome: https://editorconfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Use 3 spaces for indentation in every file.
+[*.{js,jsx,ts,tsx,mjs,cjs,json,yaml}]
+indent_style = space
+indent_size = 2
