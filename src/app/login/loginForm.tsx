@@ -14,6 +14,9 @@ import {createUserSchema, loginSchema} from '@schemas'
 import Form from '@/components/custom/form'
 import FormError from '@/components/custom/formError'
 
+//TO DO: uitbreiden met andere properties van een User, in geval van registratie
+// Op 2 plaatsen: defaultvalues + HTML (commentaar-stuk)
+
 const LoginForm: FunctionComponent = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false)
   const [actionResponse, signInOrRegister] = useActionState(Actions.signInOrRegister, {success: false})
@@ -30,48 +33,48 @@ const LoginForm: FunctionComponent = () => {
   return (
     <div className="flex flex-col justify-center">
       <div className="mb-4">
-        <PageTitle>My contacts</PageTitle>
-        <p>Log in to your existing account or create a new one with a real or fake email-address.</p>
+        <PageTitle>wHAjo!</PageTitle>
+        <p>Log in met je eigen e-mailadres en wachtwoord. <br/>Nog geen lid? Registreer je!</p>
       </div>
 
       <div className="flex flex-row justify-between mb-4">
         <Button variant="link" className={cn('p-0 text-xl', {underline: !isSignUp})} onClick={() => setIsSignUp(false)}>
-          Sign in
+          Log in
         </Button>
         <Button variant="link" className={cn('p-0 text-xl', {underline: isSignUp})} onClick={() => setIsSignUp(true)}>
-          Sign up
+          Registreer
         </Button>
       </div>
 
       <div className="mt-4">
         <Form hookForm={form} action={signInOrRegister} actionResult={actionResponse}>
           <div>
-            <Label htmlFor="email">Email address</Label>
+            <Label htmlFor="email">E-mailadres</Label>
             <Input
               {...form.register('email')}
-              placeholder="Email"
+              placeholder="voorbeeld@mail.be"
               defaultValue={actionResponse?.submittedData?.email ?? ''}
             />
             <FormError path="email" formErrors={form.formState.errors} serverErrors={actionResponse} />
           </div>
 
-          {isSignUp && (
+          {/*isSignUp && (
             <div>
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="voornaam">Voornaam</Label>
               <Input
-                {...form.register('username')}
-                placeholder="Username"
-                defaultValue={actionResponse?.submittedData?.username ?? ''}
+                {...form.register('voornaam')}
+                placeholder="Voornaam"
+                defaultValue={actionResponse?.submittedData?.voornaam ?? ''}
               />
-              <FormError path="username" formErrors={form.formState.errors} serverErrors={actionResponse} />
+              <FormError path="email" formErrors={form.formState.errors} serverErrors={actionResponse} />
             </div>
-          )}
+          )*/}
 
           <div>
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Wachtwoord</Label>
             <Input
               {...form.register('password')}
-              placeholder="Password"
+              placeholder="Wachtwoord"
               type="password"
               defaultValue={actionResponse?.submittedData?.password ?? ''}
             />
@@ -80,10 +83,10 @@ const LoginForm: FunctionComponent = () => {
 
           {isSignUp && (
             <div>
-              <Label htmlFor="passwordConfirmation">Confirm your password</Label>
+              <Label htmlFor="passwordConfirmation">Bevestig je wachtwoord</Label>
               <Input
                 {...form.register('passwordConfirmation')}
-                placeholder="Confirm you password"
+                placeholder="Typ hetzelfde wachtwoord hier nog eens"
                 type="password"
                 defaultValue={actionResponse?.submittedData?.passwordConfirmation ?? ''}
               />
@@ -92,8 +95,8 @@ const LoginForm: FunctionComponent = () => {
           )}
 
           <SubmitButtonWithLoading
-            loadingText={isSignUp ? 'Creating your account...' : 'Logging in ...'}
-            text={isSignUp ? 'Sign up' : 'Log in'}
+            loadingText={isSignUp ? 'We maken je account nu aan...' : 'Je wordt nu ingelogd ...'}
+            text={isSignUp ? 'Registreer' : 'Log in'}
           />
         </Form>
       </div>

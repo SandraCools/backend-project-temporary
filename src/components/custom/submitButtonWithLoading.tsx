@@ -25,7 +25,7 @@ const SubmitButtonWithLoading: FunctionComponent<SubmitButtonWithLoadingProps> =
     <Button
       disabled={forcefullyDisabled || pending}
       type="submit"
-      className={cn('w-full', className)}
+      className={cn('w-full', 'mt-3', className)}
       variant={variant}>
       {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
       {pending ? loadingText : text}

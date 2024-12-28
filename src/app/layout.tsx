@@ -6,11 +6,11 @@ import Navbar from '@/app/navbar'
 import {getSessionProfile} from '@mediators'
 
 export const metadata: Metadata = {
-  title: 'Les 4: Voorbeeld | Backend frameworks',
-  description: 'De voorbeeldcode voor les 4 van het vak Backend frameworks.',
+  title: 'wHAjo',
+  description: 'Online portaal van jongerenpastoraal wHAjo',
   authors: [
     {
-      name: 'Sebastiaan Henau',
+      name: 'Sandra Cools',
     },
   ],
 }

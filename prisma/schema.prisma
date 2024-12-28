@@ -13,48 +13,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Contact {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  firstName   String    @db.VarChar(255)
-  lastName    String?   @db.VarChar(255)
-  description String?   @db.VarChar(255)
-  avatar      String?   @db.VarChar(255)
-  contactInfo Json      @default("[{}]") @db.JsonB
-  meetings    Meeting[]
-  tags        Tag[]
-  userId      String    @db.Uuid
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Meeting {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title       String
-  description String?
-  date        DateTime
-  // Komt overeen met CONTRAINT FK_Meeting_Contact FOREIGN KEY (contactId) REFERENCES Contact(id) ON DELETE CASCADE
-  contact     Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
-  contactId   String   @db.Uuid
-  userId      String   @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Tag {
-  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name     String
-  contacts Contact[]
-  userId   String    @db.Uuid
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
-  id       String    @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  voornaam    String   @db.VarChar(255)
+  familienaam String   @db.VarChar(255)
+  adres       String   @db.VarChar(255)
+  huisnummer  String   @db.VarChar(255)
+  gemeente    Gemeente @relation(fields: [gemeenteId], references: [id])
+  gsmnummer   String?  @db.VarChar(255)
+  school      School   @relation(fields: [schoolId], references: [id])
+  actief      Boolean
+  fotos       Foto[]
+
   email    String    @unique @db.VarChar(255)
   password String
   username String
   sessions Session[]
-  Contact  Contact[]
-  Meeting  Meeting[]
-  Tag      Tag[]
+
+  verzondenBerichten Bericht[] @relation("VerzondenBerichten")
+  ontvangenBerichten Bericht[]
+
+  role       Role?   @relation(fields: [roleId], references: [id])
+  roleId     String? @db.Uuid
+  schoolId   String  @db.Uuid
+  gemeenteId String  @db.Uuid
+
+  groep   Groep?  @relation(fields: [groepId], references: [id])
+  groepId String? @db.Uuid
 }
 
 model Session {
@@ -63,4 +48,52 @@ model Session {
   activeUntil DateTime @default(dbgenerated("CURRENT_TIMESTAMP + interval '1 day'"))
   userId      String   @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Role {
+  id    String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name  String @db.VarChar(255)
+  users User[]
+}
+
+model School {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  naam       String   @db.VarChar(255)
+  user       User[]
+  gemeente   Gemeente @relation(fields: [gemeenteId], references: [id])
+  gemeenteId String   @db.Uuid
+}
+
+model Gemeente {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  naam     String   @db.VarChar(255)
+  postcode String   @db.VarChar(255)
+  users    User[]
+  scholen  School[]
+}
+
+model Groep {
+  id    String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  naam  String @db.VarChar(255)
+  users User[]
+}
+
+model Bericht {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  onderwerp   String   @db.VarChar(255)
+  bericht     String   @db.Text
+  verzondenOp DateTime @default(now())
+  gelezen     Boolean  @db.Boolean
+  verzender   User     @relation("VerzondenBerichten", fields: [verzenderId], references: [id])
+  verzenderId String   @db.Uuid
+  ontvangers  User[]
+}
+
+model Foto {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  url          String   @db.VarChar(255)
+  uploadedAt   DateTime @default(now())
+  gebruiker    User     @relation(fields: [gebruikerId], references: [id])
+  gebruikerId  String   @db.Uuid
+  beschrijving String?  @db.VarChar(255)
 }

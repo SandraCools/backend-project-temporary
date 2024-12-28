@@ -6,7 +6,12 @@ const profile = Prisma.validator<Prisma.UserDefaultArgs>()({
     id: true,
     email: true,
     username: true,
-  },
+    role: {
+      select: {
+        name: true,
+      }
+    }
+  }
 })
 
 export type Profile = Prisma.UserGetPayload<typeof profile>
@@ -20,7 +25,10 @@ const SessionProfile = Prisma.validator<Prisma.SessionDefaultArgs>()({
         id: true,
         email: true,
         username: true,
-      },
+      },  include: {
+        role: true,
+      }
+
     },
   },
 })

@@ -12,17 +12,22 @@ import {formAction} from '@mediators'
 export async function signInOrRegister(_prevState: ActionResponse, formData: FormData): Promise<ActionResponse> {
   if (formData.has('username')) {
     return formAction(createUserSchema, formData, async data => {
-      const input = {...data} as Prisma.UserCreateInput & {passwordConfirmation?: string}
+      const input = {
+        ...data,
+        username: `${data.voornaam}.${data.familienaam}`,
+        gemeente: { connect: { id: data.gemeenteId } },
+        school: { connect: { id: data.schoolId }},
+      } as Prisma.UserCreateInput & {passwordConfirmation?: string}
       delete input.passwordConfirmation
       const profile = await DAL.createUser(input)
 
-      // Een sessie aanmaken in de database is niet voldoende, we moeten de sessie ook doorgeven aan de gebruiken.
+      // Een sessie aanmaken in de database is niet voldoende, we moeten de sessie ook doorgeven aan de gebruiker.
       // Hiervoor gebruiken we een cookie.
       const session = await DAL.startSession(profile.id)
       await setSessionCookie(session)
 
-      // De gebruiker is ingelogd, dus redirecten we naar de contactenpagina.
-      redirect('/contacts')
+      // De gebruiker is ingelogd, dus redirecten we naar de berichtenpagina.
+      redirect('/berichten')
     })
   }
 
@@ -30,7 +35,7 @@ export async function signInOrRegister(_prevState: ActionResponse, formData: For
     const user = await DAL.getUserByEmail(data?.email)
 
     const errorResponse = {
-      errors: {errors: ['No user found with the provided user/password combination.']},
+      errors: {errors: ['Geen gebruiker gevonden met deze combinatie van gebruikersnaam en wachtwoord.']},
       success: false,
     }
     if (!user) return errorResponse

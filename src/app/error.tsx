@@ -13,10 +13,10 @@ const AccountError: FunctionComponent<AccountErrorProps> = ({error}) => {
   return (
     <Card className="w-[80%] mx-auto mt-8 bg-destructive text-destructive-foreground">
       <CardHeader>
-        <CardTitle className="text-2xl">Something went wrong :(</CardTitle>
+        <CardTitle className="text-2xl">Oeps, er ging iets mis :(</CardTitle>
       </CardHeader>
       <CardContent>
-        <p>We couldn't retrieve the requested information, please reload the page and try again..</p>
+        <p>We konden de juiste informatie niet vinden. Herlaad de pagina en probeer het zo eens opnieuw.</p>
         <p>Error: {error.message}</p>
       </CardContent>
       <CardFooter>

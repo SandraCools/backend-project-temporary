@@ -7,57 +7,60 @@ import {cache} from 'react'
 import {hashPassword} from '@serverUtils'
 
 /**
- * Create a new user with a hashed and salted password.
+ * Eén of meerdere users ophalen
  */
-export async function createUser(data: Prisma.UserCreateInput): Promise<Profile> {
-  return prismaClient.user.create({
-    data: {
-      ...data,
-      password: hashPassword(data.password),
-    },
-    select: {
-      id: true,
-      email: true,
-      username: true,
+export async function getUsers(zoekterm: string): Promise<User[]> {
+  return prismaClient.user.findMany({
+    where: {
+      OR: [
+        {voornaam: {contains: zoekterm, mode: 'insensitive'}},
+        {familienaam: {contains: zoekterm, mode: 'insensitive'}},
+      ],
     },
   })
 }
-
-/**
- * Retrieve a user by email.
- * The result includes the hashed password and should therefore NEVER be exposed to the client.
- *
- * @param email The email address of the user to retrieve.
- */
+export async function getUser(id: string): Promise<User> {
+  return prismaClient.user.findUniqueOrThrow({where: {id}})
+}
 export async function getUserByEmail(email: string): Promise<User | null> {
   return prismaClient.user.findFirst({where: {email}})
 }
 
 /**
- * Create a new session for the given user.
- *
- * @param userId
+ * Nieuwe user aanmaken (met een hashed en salted wachtwoord.)
  */
-export async function startSession(userId: string): Promise<Session> {
-  // We maken hier een nieuw id aan via de randomBytes functie van Node.js.
-  // Dit is een cryptografisch veilige functie om willekeurige strings te genereren.
-  // Een V4 UUID is ook een goede optie, de randomBytes functie wordt hier gebruikt ter illustratie.
-  // Deze functie is nuttig als je een unieke identifier hebt om een applicatie te ondertekenen.
-  const id = randomBytes(32).toString('hex')
-  return prismaClient.session.create({
+export async function createUser(data: Omit<Prisma.UserCreateInput, "username">): Promise<Profile> {
+  //Een nieuwe gebruiker is automatisch een 'gebruiker'
+  const roleNewUser = await prismaClient.role.findFirst({
+    where: { name: 'gebruiker' },
+  });
+  if (!roleNewUser) {
+    throw new Error("De rol 'gebruiker' bestaat niet in de databank.");
+  }
+
+  return prismaClient.user.create({
     data: {
-      id,
-      userId,
-      activeFrom: new Date(),
+      ...data,
+      username: `${data.voornaam}.${data.familienaam}`,
+      password: hashPassword(data.password),
+      actief: true,
+      roleId: roleNewUser.id
+    },
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      role: {
+        select: {
+          name: true,
+        },
+      },
     },
   })
 }
 
 /**
- * Retrieve the session and associated user profile.
- * Only return active sessions, even if a session with the given id exists.
- *
- * @param id The id of the session to retrieve.
+ * Sessies
  */
 export const getSessionProfile = cache(async (id: string): Promise<SessionProfile | null> => {
   return prismaClient.session.findUnique({
@@ -74,36 +77,43 @@ export const getSessionProfile = cache(async (id: string): Promise<SessionProfil
           email: true,
           username: true,
         },
+        include: {
+          role: true
+        }
       },
     },
   })
 })
-
-/**
- * Stop the session with the given id.
- *
- * @param id The id of the session to stop.
- */
+export async function startSession(userId: string): Promise<Session> {
+  const id = randomBytes(32).toString('hex')
+  return prismaClient.session.create({
+    data: {
+      id,
+      userId,
+      activeFrom: new Date(),
+    },
+  })
+}
 export async function stopSession(id: string): Promise<void> {
   await prismaClient.session.delete({where: {id}})
 }
-
-/**
- * Extend the session with the given id for 24 hours.
- *
- * @param id The id of the session to extend.
- */
 export async function extendSession(id: string): Promise<Session> {
   return prismaClient.session.update({
     where: {id},
     data: {
-      activeUntil: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      activeUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14),  //14 dagen verlengd
     },
   })
 }
 
+/**
+ * Update en Delete
+ */
+/*export async function updateUser(user: Prisma.UserUpdateInput & {id: string}): Promise<User> {
+  return await prismaClient.user.update({where: {id: user.id}, data: user})
+}*/
 export async function updateUser(userId: string, data: Prisma.UserUpdateInput): Promise<Profile> {
-  return prismaClient.user.update({
+  return await prismaClient.user.update({
     where: {id: userId},
     data: {
       ...data,
@@ -111,3 +121,8 @@ export async function updateUser(userId: string, data: Prisma.UserUpdateInput): 
     },
   })
 }
+export async function deleteUser(id: string): Promise<void> {
+  await prismaClient.user.delete({where: {id}})
+}
+
+

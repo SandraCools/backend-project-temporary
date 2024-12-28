@@ -4,7 +4,7 @@ import {TooltipProvider} from '@/components/ui/tooltip'
 import {ResizableHandle, ResizablePanel, ResizablePanelGroup} from '@/components/ui/resizable'
 import {cn} from '@/lib/utils'
 import {Separator} from '@/components/ui/separator'
-import {Calendar, Contact, TagIcon, User} from 'lucide-react'
+import {Calendar, User, Mail, Images} from 'lucide-react'
 import NavItem from '@/app/navItem'
 import {Profile} from '@/lib/models/users'
 
@@ -35,9 +35,9 @@ const Navbar: FunctionComponent<NavbarProps> = ({children, profile}) => {
               path={profile ? '/account' : '/login'}
             />
             <Separator />
-            <NavItem isCollapsed={isCollapsed} Icon={Contact} title="My contacts" path="/contacts" />
-            <NavItem isCollapsed={isCollapsed} Icon={Calendar} title="My meetings" path="/meetings" />
-            <NavItem isCollapsed={isCollapsed} Icon={TagIcon} title="Tags" path="/tags" />
+            <NavItem isCollapsed={isCollapsed} Icon={Mail} title="Berichten" path="/berichten" />
+            <NavItem isCollapsed={isCollapsed} Icon={Images} title="Foto's" path="/fotos" />
+            {/*<NavItem isCollapsed={isCollapsed} Icon={Calendar} title="Foto's" path="/kalender" />*/}
           </div>
         </ResizablePanel>
         <ResizableHandle withHandle />

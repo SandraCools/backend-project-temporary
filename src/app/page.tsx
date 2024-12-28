@@ -8,17 +8,19 @@ const Home: FunctionComponent = () => {
     <div className="min-h-screen flex flex-col justify-between py-16">
       <section>
         <div className="px-4 text-center">
-          <h2 className="text-4xl font-bold mb-4">Manage Your Contacts, Easily & Securely</h2>
-          <p className="text-xl mb-6">The ultimate app to organize, track, and manage your contacts seamlessly.</p>
+          <h2 className="text-4xl font-bold mb-4">Het online portaal van jongerenwerking wHAjo</h2>
+          <p className="text-xl mb-6">Contacteer de begeleiders en bekijk de foto's.</p>
           <Link href="/login">
-            <Button size="lg">Get Started for Free</Button>
+            <Button size="lg">Log in om toegang te krijgen tot het portaal.</Button>
           </Link>
         </div>
       </section>
 
-      <section id="features" className="py-14">
+      {/*Inhoud van de pagina aanpassen naar een eenvoudige UI*/}
+
+      <section id="berichten" className="py-14">
         <div className="px-4 text-center">
-          <h2 className="text-3xl font-bold mb-8">Features</h2>
+          <h2 className="text-3xl font-bold mb-8">Berichten</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card>
               <CardContent className="p-2">

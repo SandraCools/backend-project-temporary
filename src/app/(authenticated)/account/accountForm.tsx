@@ -26,7 +26,7 @@ const AccountForm: FunctionComponent<Profile> = profile => {
       id={profile.id}
       className="space-y-4 mt-4">
       <div className="grid grid-cols-2 gap-4 items-center">
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="username">Gebruikernaam</Label>
         <Input {...hookForm.register('username')} defaultValue={actionResult?.submittedData?.username ?? profile?.username} />
       </div>
 
@@ -39,7 +39,7 @@ const AccountForm: FunctionComponent<Profile> = profile => {
         }}
         variant="destructive"
         className="w-full">
-        Log out
+        Uitloggen
       </Button>
     </Form>
   )

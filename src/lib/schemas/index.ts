@@ -1,16 +1,27 @@
-import * as tagSchemas from './tagSchemas'
-import * as contactSchemas from './contactSchemas'
+import * as messageSchemas from './messageSchemas'
+import * as photoSchemas from './photoSchemas'
 import * as userSchemas from './userSchemas'
-import * as meetingSchemas from './meetingSchemas'
+import * as groupSchemas from './groupSchemas'
+import * as citySchemas from './citySchemas'
+import * as roleSchemas from './roleSchemas'
+import * as schoolSchemas from './schoolSchemas'
 
-export * from './tagSchemas'
-export * from './contactSchemas'
+
+export * from './messageSchemas'
+export * from './photoSchemas'
 export * from './userSchemas'
-export * from './meetingSchemas'
+export * from './groupSchemas'
+export * from './roleSchemas'
+export * from './schoolSchemas'
+export * from './citySchemas'
+
 
 export default {
-  ...tagSchemas,
-  ...contactSchemas,
+  ...messageSchemas,
+  ...photoSchemas,
   ...userSchemas,
-  ...meetingSchemas,
+  ...groupSchemas,
+  ...roleSchemas,
+  ...schoolSchemas,
+  ...citySchemas,
 }
